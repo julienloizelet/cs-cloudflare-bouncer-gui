@@ -1,4 +1,4 @@
-import { spawn, ChildProcess } from 'child_process';
+import { spawn, type ChildProcess } from 'child_process';
 import { serverConfig, getConfigPath } from '../config.js';
 import fs from 'fs/promises';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';

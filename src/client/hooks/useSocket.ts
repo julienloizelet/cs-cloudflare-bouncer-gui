@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { io, Socket } from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
 
 export interface CommandOutput {
   type: 'stdout' | 'stderr' | 'exit' | 'error';
@@ -78,7 +78,7 @@ export function useSocket() {
     crowdsecLapiUrl: string,
     crowdsecLapiKey: string
   ) => {
-    if (!socketRef.current) return;
+    if (!socketRef.current) {return;}
     setIsRunning(true);
     clearOutput();
     socketRef.current.emit('generate-config', {
@@ -89,7 +89,7 @@ export function useSocket() {
   }, [clearOutput]);
 
   const loadZones = useCallback(() => {
-    if (!socketRef.current) return;
+    if (!socketRef.current) {return;}
     socketRef.current.emit('get-zones');
   }, []);
 
@@ -119,14 +119,14 @@ export function useSocket() {
   }, []);
 
   const deploy = useCallback((crowdsecLapiUrl: string, crowdsecLapiKey: string) => {
-    if (!socketRef.current) return;
+    if (!socketRef.current) {return;}
     setIsRunning(true);
     clearOutput();
     socketRef.current.emit('deploy', { crowdsecLapiUrl, crowdsecLapiKey });
   }, [clearOutput]);
 
   const clear = useCallback(() => {
-    if (!socketRef.current) return;
+    if (!socketRef.current) {return;}
     setIsRunning(true);
     clearOutput();
     socketRef.current.emit('clear');

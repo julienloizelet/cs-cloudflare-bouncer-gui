@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Action } from '../types';
+import type { Action } from '../types';
 
 interface CredentialsFormProps {
   action: Action;

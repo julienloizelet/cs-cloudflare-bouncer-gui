@@ -13,7 +13,7 @@ import {
   clearInfrastructure,
   getZonesFromConfig,
   updateConfigWithSelectedZones,
-  CommandOutput,
+  type CommandOutput,
 } from './services/bouncer.js';
 
 const __filename = fileURLToPath(import.meta.url);

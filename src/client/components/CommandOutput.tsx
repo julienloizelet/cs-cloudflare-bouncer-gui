@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { CommandOutput as CommandOutputType } from '../hooks/useSocket';
+import type { CommandOutput as CommandOutputType } from '../hooks/useSocket';
 
 interface CommandOutputProps {
   output: CommandOutputType[];

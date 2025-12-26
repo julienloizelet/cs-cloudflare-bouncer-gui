@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { ZoneInfo } from '../hooks/useSocket';
+import type { ZoneInfo } from '../hooks/useSocket';
 
 interface ZoneSelectProps {
   zones: ZoneInfo[];
@@ -19,7 +19,7 @@ export default function ZoneSelect({
   const [filter, setFilter] = useState('');
 
   const filteredZones = useMemo(() => {
-    if (!filter.trim()) return zones;
+    if (!filter.trim()) {return zones;}
     const lowerFilter = filter.toLowerCase();
     return zones.filter(
       (zone) =>

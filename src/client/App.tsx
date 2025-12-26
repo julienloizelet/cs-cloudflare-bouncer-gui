@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from './hooks/useSocket';
-import { Action, WizardStep, WizardState } from './types';
+import type { Action, WizardStep, WizardState } from './types';
 import ActionSelect from './components/ActionSelect';
 import CredentialsForm from './components/CredentialsForm';
 import ClearConfirm from './components/ClearConfirm';
@@ -95,7 +95,7 @@ export default function App() {
     try {
       await socket.updateZones(state.selectedZoneIds);
       socket.deploy(state.crowdsecLapiUrl, state.crowdsecLapiKey);
-    } catch (error) {
+    } catch (_error) {
       setState((s) => ({ ...s, step: 'error' }));
     }
   };
@@ -125,9 +125,9 @@ export default function App() {
         return <ActionSelect onSelect={handleActionSelect} />;
 
       case 'credentials':
-        return (
+        return state.action && (
           <CredentialsForm
-            action={state.action!}
+            action={state.action}
             onSubmit={handleCredentialsSubmit}
             onBack={handleBack}
           />
@@ -161,9 +161,9 @@ export default function App() {
         );
 
       case 'success':
-        return (
+        return state.action && (
           <SuccessScreen
-            action={state.action!}
+            action={state.action}
             onReset={handleReset}
           />
         );

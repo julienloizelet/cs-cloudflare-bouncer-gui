@@ -1,4 +1,4 @@
-import { Action } from '../types';
+import type { Action } from '../types';
 
 interface SuccessScreenProps {
   action: Action;
@@ -39,7 +39,7 @@ export default function SuccessScreen({ action, onReset }: SuccessScreenProps) {
 
         {isDeploy && (
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 text-left">
-            <h3 className="font-semibold text-blue-800 mb-2">What's Next?</h3>
+            <h3 className="font-semibold text-blue-800 mb-2">Next Steps</h3>
             <ul className="text-blue-700 text-sm space-y-1">
               <li>• The bouncer will sync decisions every 5 minutes</li>
               <li>• Check your Cloudflare dashboard to verify workers are running</li>
@@ -49,7 +49,7 @@ export default function SuccessScreen({ action, onReset }: SuccessScreenProps) {
         )}
 
         <button onClick={onReset} className="btn-primary">
-          {isDeploy ? 'Configure Another Zone' : 'Start Over'}
+          Start Over
         </button>
       </div>
     </div>
