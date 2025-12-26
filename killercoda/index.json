@@ -1,0 +1,53 @@
+{
+  "title": "CrowdSec Cloudflare Worker Bouncer",
+  "description": "Deploy CrowdSec protection to your Cloudflare zones using the autonomous worker bouncer",
+  "time": "15 minutes",
+  "difficulty": "Beginner",
+  "backend": {
+    "imageid": "ubuntu"
+  },
+  "interface": {
+    "layout": "tab-split"
+  },
+  "assets": {
+    "host01": [
+      {
+        "file": "background.sh",
+        "target": "/root/",
+        "chmod": "+x"
+      },
+      {
+        "file": "foreground.sh",
+        "target": "/root/",
+        "chmod": "+x"
+      }
+    ]
+  },
+  "details": {
+    "intro": {
+      "text": "intro.md"
+    },
+    "steps": [
+      {
+        "title": "Configure and Deploy",
+        "text": "step1.md"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "tabs": [
+    {
+      "title": "Terminal",
+      "type": "terminal",
+      "hostname": "host01"
+    },
+    {
+      "title": "Bouncer GUI",
+      "type": "service",
+      "hostname": "host01",
+      "port": 3000
+    }
+  ]
+}
