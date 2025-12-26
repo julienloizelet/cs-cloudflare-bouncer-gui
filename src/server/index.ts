@@ -125,8 +125,9 @@ io.on('connection', (socket) => {
   });
 });
 
-// Start server
-httpServer.listen(serverConfig.port, () => {
-  console.log(`Server running on http://localhost:${serverConfig.port}`);
+// Start server - bind to 0.0.0.0 for external access (e.g., KillerCoda)
+const host = process.env.HOST || '0.0.0.0';
+httpServer.listen(serverConfig.port, host, () => {
+  console.log(`Server running on http://${host}:${serverConfig.port}`);
   console.log(`Bouncer binary: ${serverConfig.bouncerBinaryPath}`);
 });
