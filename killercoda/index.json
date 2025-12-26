@@ -9,23 +9,11 @@
   "interface": {
     "layout": "tab-split"
   },
-  "assets": {
-    "host01": [
-      {
-        "file": "background.sh",
-        "target": "/root/",
-        "chmod": "+x"
-      },
-      {
-        "file": "foreground.sh",
-        "target": "/root/",
-        "chmod": "+x"
-      }
-    ]
-  },
   "details": {
     "intro": {
-      "text": "intro.md"
+      "text": "intro.md",
+      "background": "background.sh",
+      "foreground": "foreground.sh"
     },
     "steps": [
       {

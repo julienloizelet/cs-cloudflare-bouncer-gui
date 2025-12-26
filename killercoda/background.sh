@@ -1,9 +1,12 @@
 #!/bin/bash
 
-set -e
-
-# Log file for debugging
+# Log file for debugging - create immediately to confirm script runs
+touch /tmp/.background-started
 exec > /var/log/setup.log 2>&1
+echo "=== Background script started at $(date) ==="
+
+# Don't exit on error, continue and log issues
+set +e
 
 echo "=== Starting CrowdSec Cloudflare Bouncer GUI Setup ==="
 
@@ -46,8 +49,7 @@ if [ -n "$BOUNCER_DIR" ]; then
     chmod +x /usr/local/bin/crowdsec-cloudflare-worker-bouncer
     echo "Bouncer installed from ${BOUNCER_DIR}"
 else
-    echo "ERROR: Could not find built bouncer binary"
-    exit 1
+    echo "WARNING: Could not find built bouncer binary, continuing anyway..."
 fi
 
 # Verify bouncer installation
@@ -69,11 +71,14 @@ echo "Building application..."
 npm run build
 
 # Create environment file
-echo "BOUNCER_BINARY_PATH=crowdsec-cloudflare-worker-bouncer" > .env
+cat > .env << EOF
+BOUNCER_BINARY_PATH=crowdsec-cloudflare-worker-bouncer
+NODE_ENV=production
+EOF
 
 # Start the server in background
 echo "Starting server..."
-nohup npm start > /var/log/bouncer-gui.log 2>&1 &
+NODE_ENV=production nohup npm start > /var/log/bouncer-gui.log 2>&1 &
 
 # Wait for server to be ready
 echo "Waiting for server to start..."
