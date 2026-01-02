@@ -20,6 +20,7 @@ const initialState: WizardState = {
 
 export default function App() {
   const [state, setState] = useState<WizardState>(initialState);
+  const [initialSelectionDone, setInitialSelectionDone] = useState(false);
   const socket = useSocket();
 
   // Watch for command completion
@@ -39,15 +40,16 @@ export default function App() {
     }
   }, [socket.isRunning, socket.lastExitCode, state.step, state.action, state.selectedZoneIds.length, socket]);
 
-  // Update selected zones when zones are loaded
+  // Auto-select all zones when they are first loaded (only once per wizard session)
   useEffect(() => {
-    if (socket.zones.length > 0 && state.selectedZoneIds.length === 0) {
+    if (socket.zones.length > 0 && !initialSelectionDone) {
+      setInitialSelectionDone(true);
       setState((s) => ({
         ...s,
         selectedZoneIds: socket.zones.map((z) => z.id),
       }));
     }
-  }, [socket.zones, state.selectedZoneIds.length]);
+  }, [socket.zones, initialSelectionDone]);
 
   const handleActionSelect = (action: Action) => {
     setState((s) => ({ ...s, action, step: 'credentials' }));
@@ -116,6 +118,7 @@ export default function App() {
   const handleReset = () => {
     socket.clearOutput();
     socket.setZones([]);
+    setInitialSelectionDone(false);
     setState(initialState);
   };
 
@@ -145,6 +148,7 @@ export default function App() {
         return (
           <ZoneSelect
             zones={socket.zones}
+            zonesLoading={socket.zonesLoading}
             selectedIds={state.selectedZoneIds}
             onSelectionChange={handleZoneSelectionChange}
             onDeploy={handleDeploy}

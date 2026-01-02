@@ -22,6 +22,7 @@ export function useSocket() {
   const [output, setOutput] = useState<CommandOutput[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [zones, setZones] = useState<ZoneInfo[]>([]);
+  const [zonesLoading, setZonesLoading] = useState(false);
   const [lastExitCode, setLastExitCode] = useState<number | null>(null);
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export function useSocket() {
     });
 
     socket.on('zones-loaded', (data: { zones: ZoneInfo[] }) => {
+      setZonesLoading(false);
       setZones(data.zones);
     });
 
@@ -51,6 +53,7 @@ export function useSocket() {
     });
 
     socket.on('zones-error', (data: { error: string }) => {
+      setZonesLoading(false);
       setOutput((prev) => [...prev, { type: 'error', data: data.error }]);
     });
 
@@ -81,6 +84,7 @@ export function useSocket() {
 
   const loadZones = useCallback(() => {
     if (!socketRef.current) {return;}
+    setZonesLoading(true);
     socketRef.current.emit('get-zones');
   }, []);
 
@@ -127,6 +131,7 @@ export function useSocket() {
     output,
     isRunning,
     zones,
+    zonesLoading,
     lastExitCode,
     generateConfig,
     loadZones,

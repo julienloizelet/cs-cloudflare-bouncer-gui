@@ -3,6 +3,7 @@ import type { ZoneInfo } from '../hooks/useSocket';
 
 interface ZoneSelectProps {
   zones: ZoneInfo[];
+  zonesLoading: boolean;
   selectedIds: string[];
   onSelectionChange: (ids: string[]) => void;
   onDeploy: () => void;
@@ -11,6 +12,7 @@ interface ZoneSelectProps {
 
 export default function ZoneSelect({
   zones,
+  zonesLoading,
   selectedIds,
   onSelectionChange,
   onDeploy,
@@ -48,6 +50,25 @@ export default function ZoneSelect({
   const allFilteredSelected = filteredZones.every((z) =>
     selectedIds.includes(z.id)
   );
+
+  // Show loading spinner while zones are being fetched
+  if (zonesLoading) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="card text-center">
+          <div className="flex justify-center mb-4">
+            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          </div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            Loading Zones
+          </h2>
+          <p className="text-gray-600">
+            Fetching your Cloudflare zones...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (zones.length === 0) {
     return (
