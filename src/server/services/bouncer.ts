@@ -1,4 +1,4 @@
-import { spawn, type ChildProcess } from 'child_process';
+import { spawn } from 'child_process';
 import { serverConfig, getConfigPath } from '../config.js';
 import fs from 'fs/promises';
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml';
@@ -15,31 +15,41 @@ async function ensureConfigDir(): Promise<void> {
   await fs.mkdir(serverConfig.configDir, { recursive: true });
 }
 
+interface RunCommandResult {
+  code: number;
+}
+
 function runBouncerCommand(
   args: string[],
-  onOutput: OutputCallback
-): ChildProcess {
-  const proc = spawn(serverConfig.bouncerBinaryPath, args, {
-    env: { ...process.env },
-  });
+  onOutput: OutputCallback,
+  options?: { skipExitEvent?: boolean }
+): Promise<RunCommandResult> {
+  return new Promise((resolve, reject) => {
+    const proc = spawn(serverConfig.bouncerBinaryPath, args, {
+      env: { ...process.env },
+    });
 
-  proc.stdout.on('data', (data: Buffer) => {
-    onOutput({ type: 'stdout', data: data.toString() });
-  });
+    proc.stdout.on('data', (data: Buffer) => {
+      onOutput({ type: 'stdout', data: data.toString() });
+    });
 
-  proc.stderr.on('data', (data: Buffer) => {
-    onOutput({ type: 'stderr', data: data.toString() });
-  });
+    proc.stderr.on('data', (data: Buffer) => {
+      onOutput({ type: 'stderr', data: data.toString() });
+    });
 
-  proc.on('close', (code) => {
-    onOutput({ type: 'exit', data: '', code: code ?? 0 });
-  });
+    proc.on('close', (code) => {
+      const exitCode = code ?? 0;
+      if (!options?.skipExitEvent) {
+        onOutput({ type: 'exit', data: '', code: exitCode });
+      }
+      resolve({ code: exitCode });
+    });
 
-  proc.on('error', (err) => {
-    onOutput({ type: 'error', data: err.message });
+    proc.on('error', (err) => {
+      onOutput({ type: 'error', data: err.message });
+      reject(err);
+    });
   });
-
-  return proc;
 }
 
 export async function generateConfig(
@@ -51,28 +61,34 @@ export async function generateConfig(
   await ensureConfigDir();
   const configPath = getConfigPath();
 
-  const proc = runBouncerCommand(['-g', cloudflareToken, '-o', configPath], onOutput);
+  // Run command but skip exit event so we can add credentials first
+  const result = await runBouncerCommand(
+    ['-g', cloudflareToken, '-o', configPath],
+    onOutput,
+    { skipExitEvent: true }
+  );
 
-  // Wait for config generation to complete, then update with lapi credentials
-  proc.on('close', async (code) => {
-    if (code === 0 && crowdsecLapiUrl && crowdsecLapiKey) {
-      try {
-        const configContent = await fs.readFile(configPath, 'utf-8');
-        const config = parseYaml(configContent);
+  // Update config with lapi credentials if command succeeded
+  if (result.code === 0 && crowdsecLapiUrl && crowdsecLapiKey) {
+    try {
+      const configContent = await fs.readFile(configPath, 'utf-8');
+      const config = parseYaml(configContent);
 
-        config.crowdsec_config = {
-          ...config.crowdsec_config,
-          lapi_url: crowdsecLapiUrl,
-          lapi_key: crowdsecLapiKey,
-        };
+      config.crowdsec_config = {
+        ...config.crowdsec_config,
+        lapi_url: crowdsecLapiUrl,
+        lapi_key: crowdsecLapiKey,
+      };
 
-        await fs.writeFile(configPath, stringifyYaml(config));
-        onOutput({ type: 'stdout', data: 'CrowdSec credentials added to config.\n' });
-      } catch (err) {
-        onOutput({ type: 'stderr', data: `Failed to update config with credentials: ${err}\n` });
-      }
+      await fs.writeFile(configPath, stringifyYaml(config));
+      onOutput({ type: 'stdout', data: 'CrowdSec credentials added to config.\n' });
+    } catch (err) {
+      onOutput({ type: 'stderr', data: `Failed to update config with credentials: ${err}\n` });
     }
-  });
+  }
+
+  // Now send the exit event
+  onOutput({ type: 'exit', data: '', code: result.code });
 }
 
 export async function deployAutonomous(
@@ -112,12 +128,6 @@ export async function clearInfrastructure(
   }
 
   runBouncerCommand(['-d', '-c', configPath], onOutput);
-}
-
-export async function testConfig(onOutput: OutputCallback): Promise<void> {
-  const configPath = getConfigPath();
-
-  runBouncerCommand(['-t', '-c', configPath], onOutput);
 }
 
 export interface ZoneInfo {

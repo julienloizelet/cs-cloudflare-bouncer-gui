@@ -6,20 +6,6 @@ import {
 
 const router = Router();
 
-// Generate config from Cloudflare token
-router.post('/generate-config', async (req: Request, res: Response) => {
-  const { cloudflareToken } = req.body;
-
-  if (!cloudflareToken) {
-    res.status(400).json({ error: 'Cloudflare token is required' });
-    return;
-  }
-
-  // This endpoint just triggers config generation
-  // Real-time output is sent via WebSocket
-  res.json({ message: 'Config generation started. Watch WebSocket for output.' });
-});
-
 // Get zones from generated config
 router.get('/zones', async (_req: Request, res: Response) => {
   try {

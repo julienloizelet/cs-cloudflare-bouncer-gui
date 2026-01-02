@@ -102,6 +102,8 @@ src/
 | `/api/zones` | GET | Get zones from generated config |
 | `/api/zones/select` | POST | Update config with selected zones |
 
+> Note: Config generation and deployment are handled via WebSocket for real-time output streaming.
+
 ### WebSocket Events
 
 **Client → Server:**

@@ -18,6 +18,6 @@ Have these ready before clicking Start:
    - Zone: Workers Routes (Edit), Zone (Read)
    - User: User Details (Read)
 
-2. **CrowdSec Blocklist Mirror URL + API Key** from [CrowdSec Console](https://app.crowdsec.net) or self-hosted
+2. **CrowdSec Blocklist Mirror URL + API Key** from [CrowdSec Console](https://app.crowdsec.net).
 
 Click **Start** when ready.
