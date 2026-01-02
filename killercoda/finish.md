@@ -1,54 +1,21 @@
-# Congratulations!
+# Setting Up Environment
 
-You have successfully deployed the CrowdSec Cloudflare Worker Bouncer in autonomous mode.
+The environment is being prepared. This takes **5-10 minutes**.
 
-## What happens now?
+Watch the terminal for progress. When you see **"READY"**, open the GUI:
 
-Your bouncer is running autonomously on Cloudflare:
+**[Open Bouncer GUI]({{TRAFFIC_HOST1_3000}})**
 
-- **Every 5 minutes**: The decisions-sync worker fetches the latest decisions from your CrowdSec blocklist mirror and updates the KV store
-- **On every request**: The main worker checks incoming IPs against the KV store and applies the configured action (ban or captcha)
+## Using the GUI
 
-## Monitoring
+1. Select **Deploy**
+2. Enter your Cloudflare API token and CrowdSec credentials
+3. Select zones to protect
+4. Click **Deploy**
 
-### Cloudflare Dashboard
+## Troubleshooting
 
-- View worker invocations and errors in **Workers & Pages** > **Your Worker** > **Metrics**
-- Check KV storage usage in **Workers & Pages** > **KV**
-- Monitor D1 database for metrics in **Workers & Pages** > **D1**
-
-### CrowdSec Console
-
-If using CrowdSec Console blocklists, you can monitor:
-
-- Blocklist sync status
-- Number of active decisions
-- Bouncer enrollment status
-
-## Cleaning Up
-
-To remove all bouncer infrastructure from Cloudflare:
-
-1. Open the Bouncer GUI
-2. Select **Clear**
-3. Enter your Cloudflare API token
-4. Confirm the operation
-
-This will remove:
-- Worker scripts
-- Worker routes
-- KV namespaces
-- D1 databases
-- Turnstile widgets
-
-## Learn More
-
-- [CrowdSec Documentation](https://docs.crowdsec.net/)
-- [Cloudflare Worker Bouncer GitHub](https://github.com/crowdsecurity/cs-cloudflare-worker-bouncer)
-- [CrowdSec Console](https://app.crowdsec.net)
-
-## Feedback
-
-If you encountered any issues or have suggestions, please open an issue on GitHub or join the [CrowdSec Discord](https://discord.gg/crowdsec).
-
-Thank you for using CrowdSec!
+```bash
+cat /var/log/setup.log       # Setup logs
+cat /var/log/bouncer-gui.log # GUI logs
+```
