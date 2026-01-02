@@ -19,7 +19,6 @@ export interface ZoneInfo {
 
 export function useSocket() {
   const socketRef = useRef<Socket | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
   const [output, setOutput] = useState<CommandOutput[]>([]);
   const [isRunning, setIsRunning] = useState(false);
   const [zones, setZones] = useState<ZoneInfo[]>([]);
@@ -31,14 +30,6 @@ export function useSocket() {
     });
 
     socketRef.current = socket;
-
-    socket.on('connect', () => {
-      setIsConnected(true);
-    });
-
-    socket.on('disconnect', () => {
-      setIsConnected(false);
-    });
 
     socket.on('command-output', (data: CommandOutput) => {
       setOutput((prev) => [...prev, data]);
@@ -133,7 +124,6 @@ export function useSocket() {
   }, [clearOutput]);
 
   return {
-    isConnected,
     output,
     isRunning,
     zones,

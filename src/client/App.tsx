@@ -66,7 +66,7 @@ export default function App() {
     if (state.action === 'clear') {
       setState((s) => ({ ...s, step: 'clear-confirm' }));
     } else {
-      // Deploy flow: generate config first (with lapi credentials)
+      // Deploy flow: generate config first (with Lapi credentials)
       setState((s) => ({ ...s, step: 'executing' }));
       socket.generateConfig(
         credentials.cloudflareToken,
@@ -192,7 +192,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <Header isConnected={socket.isConnected} />
+      <Header />
       <main className="container mx-auto px-4 py-8">
         {renderStep()}
       </main>

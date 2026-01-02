@@ -76,7 +76,7 @@ src/
 │   ├── hooks/
 │   │   └── useSocket.ts   # WebSocket hook for real-time communication
 │   └── components/
-│       ├── Header.tsx         # App header with connection status
+│       ├── Header.tsx         # App header
 │       ├── ActionSelect.tsx   # Step 1: Deploy/Clear selection
 │       ├── CredentialsForm.tsx # Step 2: Token input
 │       ├── ClearConfirm.tsx   # Step 3a: Clear confirmation
@@ -129,3 +129,40 @@ src/
 - **Backend**: Express.js, Socket.IO, TypeScript
 - **Build**: Vite (frontend), tsc (backend)
 - **Runtime**: Node.js 18+
+
+## KillerCoda Scenario
+
+The `killercoda/` directory contains an interactive tutorial for [KillerCoda](https://killercoda.com).
+
+### Structure
+
+```
+killercoda/
+├── index.json      # Scenario configuration
+├── intro.md        # Introduction page (prerequisites)
+├── finish.md       # Setup page (shown after Start)
+├── background.sh   # Installs Node.js, Go, bouncer, and GUI
+└── foreground.sh   # Shows setup progress in terminal
+```
+
+### Flow
+
+1. **Intro**: User reads prerequisites, clicks Start
+2. **Finish**: Scripts run, terminal shows progress, user clicks GUI link when ready
+
+### Key Configuration
+
+- `index.json`: Defines intro → finish flow (no steps)
+- `background.sh`: Spawns setup as detached process to avoid KillerCoda timeout
+- `foreground.sh`: Waits for `/tmp/.setup-complete` and shows progress
+- GUI link uses `{{TRAFFIC_HOST1_3000}}` variable (replaced by KillerCoda at runtime)
+
+### Testing Locally
+
+KillerCoda scenarios can only be tested on the platform. Push changes to a GitHub repository and link it to KillerCoda.
+
+### Logs
+
+When running on KillerCoda:
+- Setup logs: `/var/log/setup.log`
+- GUI server logs: `/var/log/bouncer-gui.log`
